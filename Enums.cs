@@ -2,26 +2,29 @@
 	public enum LogObject {
 		CurrentSplit,
 		GameState,
-		StoryPhase,
-		ActiveMilestones,
-		CardStates
+		Loading,
+		StartedGame,
+		EndedGame,
+		WorldType,
+		ActiveScene,
+		Infection
 	}
 	public enum GameState {
-		SHOW_SPLASH,
-		SHOWING_SPLASH,
-		LOADING,
-		LOADED,
-		FADEIN_GAME,
-		PLAY_GAME,
-		FADEOUT_GAME,
-		HOLD_AFTER_LOAD,
-		SHOW_END_GAME,
-		SHOWING_END_GAME
+		NewGame,
+		ExistingGame,
+		Playing,
+		Paused,
+		Logos
 	}
-	public enum StoryPhase {
-		PROLOGUE,
-		CHAPTERS,
-		EPILOGUE,
-		ENDING
+	public enum WorldType {
+		Cuddly,
+		Swamp,
+		Snow,
+		Crystal
+	}
+	public enum PortalType {
+		UNKNOWN,
+		BEGINNING,
+		END
 	}
 }

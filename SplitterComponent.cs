@@ -15,10 +15,8 @@ namespace LiveSplit.Semblance {
 		private static string LOGFILE = "_Semblance.txt";
 		private SplitterMemory mem;
 		private int currentSplit = -1, lastLogCheck = 0;
-		private bool hasLog = false;
+		private bool hasLog = false, lastStarted = false, hasReachedRoom = false;
 		private Dictionary<LogObject, string> currentValues = new Dictionary<LogObject, string>();
-		private Dictionary<string, string> cardStates = new Dictionary<string, string>();
-		private bool lastInTransition = false;
 		public SplitterComponent(LiveSplitState state) {
 			mem = new SplitterMemory();
 			foreach (LogObject key in Enum.GetValues(typeof(LogObject))) {
@@ -27,6 +25,8 @@ namespace LiveSplit.Semblance {
 
 			if (state != null) {
 				Model = new TimerModel() { CurrentState = state };
+				Model.InitializeGameTime();
+				Model.CurrentState.IsGameTimePaused = true;
 				state.OnReset += OnReset;
 				state.OnPause += OnPause;
 				state.OnResume += OnResume;
@@ -40,21 +40,39 @@ namespace LiveSplit.Semblance {
 			bool shouldSplit = false;
 
 			if (currentSplit == -1) {
-				bool inTransition = mem.MouseOverCardInTransition();
-				shouldSplit = mem.HasActiveMilestone("chapter1") && inTransition && !lastInTransition;
-				lastInTransition = inTransition;
+				bool hasStarted = mem.StartedGame();
+				shouldSplit = mem.CurrentGameState() == GameState.NewGame && hasStarted && !lastStarted;
+				lastStarted = hasStarted;
 			} else if (Model.CurrentState.CurrentPhase == TimerPhase.Running) {
-				bool newChapter = false;
-				switch (currentSplit) {
-					case 0: newChapter = mem.HasCardState("card002", "bowl=fruit lands"); break;
-					case 1: newChapter = mem.HasCardState("card004", "statues=fruit falls"); break;
-					case 2: newChapter = mem.HasCardState("card001c", "fruit=final"); break;
-					case 3: newChapter = mem.HasCardState("card001c", "char=take fruit"); break;
-					case 4: newChapter = mem.HasCardState("card012", "boy_in_tower=take fruit"); break;
-					case 5: newChapter = mem.StoryPhase() == StoryPhase.EPILOGUE; break;
+				string scene = mem.ActiveScene();
+				bool loading = scene == "EndingPrototype" ? mem.EndedGame() : mem.Loading();
+				if (scene == "0 - Enforce Collectible") {
+					hasReachedRoom = true;
 				}
-				shouldSplit = newChapter && !lastInTransition;
-				lastInTransition = newChapter;
+				switch (currentSplit) {
+					case 0: shouldSplit = scene == "SquishCreationTutorial" && hasReachedRoom && mem.InfectionLevel() == 0 && loading && !lastStarted; break;
+					case 1: shouldSplit = scene == "1 - Intro Deform" && mem.InfectionLevel() == 0 && loading && !lastStarted; break;
+					case 2: shouldSplit = scene == "2 - Deform Puzzles" && mem.InfectionLevel() == 0 && loading && !lastStarted; break;
+					case 3: shouldSplit = scene == "3 - Laser Intro" && mem.InfectionLevel() == 0 && loading && !lastStarted; break;
+					case 4: shouldSplit = scene == "4 - Wall Jumping" && mem.InfectionLevel() == 0 && loading && !lastStarted; break;
+					case 5: shouldSplit = scene == "5 - Lasers 2" && mem.InfectionLevel() == 0 && loading && !lastStarted; break;
+					case 6: shouldSplit = scene == "6 - No Dash Zones" && mem.InfectionLevel() == 0 && loading && !lastStarted; break;
+					case 7: shouldSplit = scene == "1 - Intro Reset" && mem.InfectionLevel() == 0 && loading && !lastStarted; break;
+					case 8: shouldSplit = scene == "2 - Reset Puzzles" && mem.InfectionLevel() == 0 && loading && !lastStarted; break;
+					case 9: shouldSplit = scene == "3 - Throw up 1" && mem.InfectionLevel() == 0 && loading && !lastStarted; break;
+					case 10: shouldSplit = scene == "4 - Throw up 2" && mem.InfectionLevel() == 0 && loading && !lastStarted; break;
+					case 11: shouldSplit = scene == "5 - Throw Side" && mem.InfectionLevel() == 0 && loading && !lastStarted; break;
+					case 12: shouldSplit = scene == "6 - Moving beams" && mem.InfectionLevel() == 0 && loading && !lastStarted; break;
+					case 13: shouldSplit = scene == "1 - Intro hard" && mem.InfectionLevel() == 0 && loading && !lastStarted; break;
+					case 14: shouldSplit = scene == "2 - Intro Puzzle" && mem.InfectionLevel() == 0 && loading && !lastStarted; break;
+					case 15: shouldSplit = scene == "3 - intro beam" && mem.InfectionLevel() == 0 && loading && !lastStarted; break;
+					case 16: shouldSplit = scene == "4 - Reset Beam Complex" && mem.InfectionLevel() == 0 && loading && !lastStarted; break;
+					case 17: shouldSplit = scene == "5 - Reset Beam Throw Up Shape" && mem.InfectionLevel() == 0 && loading && !lastStarted; break;
+					case 18: shouldSplit = scene == "EndingPrototype" && loading && !lastStarted; break;
+				}
+				lastStarted = loading;
+
+				Model.CurrentState.IsGameTimePaused = Model.CurrentState.CurrentPhase != TimerPhase.Running || loading;
 			}
 
 			HandleSplit(shouldSplit, false);
@@ -86,26 +104,13 @@ namespace LiveSplit.Semblance {
 
 					switch (key) {
 						case LogObject.CurrentSplit: curr = currentSplit.ToString(); break;
-						case LogObject.GameState: curr = mem.GameState().ToString(); break;
-						case LogObject.StoryPhase: curr = mem.StoryPhase().ToString(); break;
-						case LogObject.ActiveMilestones: curr = mem.GetActiveMilestones(); break;
-						case LogObject.CardStates:
-							curr = string.Empty;
-							Dictionary<string, string> states = mem.AllCardStates();
-							foreach (KeyValuePair<string, string> pair in cardStates) {
-								string lastVal = string.Empty;
-								if (!states.TryGetValue(pair.Key, out lastVal)) {
-									states[pair.Key] = string.Empty;
-								}
-							}
-							foreach (KeyValuePair<string, string> pair in states) {
-								string lastVal = string.Empty;
-								if (!cardStates.TryGetValue(pair.Key, out lastVal) || lastVal != pair.Value) {
-									WriteLogWithTime(pair.Key.ToString() + ": ".PadRight(pair.Key.ToString().Length > 16 ? 0 : 16 - pair.Key.ToString().Length, ' ') + (lastVal ?? string.Empty).PadLeft(25, ' ') + " -> " + pair.Value);
-									cardStates[pair.Key] = pair.Value;
-								}
-							}
-							break;
+						case LogObject.GameState: curr = mem.CurrentGameState().ToString(); break;
+						case LogObject.Loading: curr = mem.Loading().ToString(); break;
+						case LogObject.StartedGame: curr = mem.StartedGame().ToString(); break;
+						case LogObject.EndedGame: curr = mem.EndedGame().ToString(); break;
+						case LogObject.WorldType: curr = mem.ActiveWorld().ToString(); break;
+						case LogObject.ActiveScene: curr = mem.ActiveScene(); break;
+						case LogObject.Infection: curr = mem.InfectionLevel().ToString(); break;
 						default: curr = string.Empty; break;
 					}
 
@@ -144,19 +149,34 @@ namespace LiveSplit.Semblance {
 			LogValues();
 		}
 		public void Update(IInvalidator invalidator, LiveSplitState lvstate, float width, float height, LayoutMode mode) {
-			//if (Model.CurrentState.Run.Count == 1 && string.IsNullOrEmpty(Model.CurrentState.Run[0].Name)) {
-			//	Model.CurrentState.Run[0].Name = "Red";
-			//	Model.CurrentState.Run.AddSegment("Green");
-			//	Model.CurrentState.Run.AddSegment("Yellow");
-			//	Model.CurrentState.Run.AddSegment("Blue");
-			//	Model.CurrentState.Run.AddSegment("Purple");
-			//	Model.CurrentState.Run.AddSegment("End");
-			//}
+			if (Model.CurrentState.Run.Count == 1 && string.IsNullOrEmpty(Model.CurrentState.Run[0].Name)) {
+				Model.CurrentState.Run[0].Name = "Intro";
+				Model.CurrentState.Run.AddSegment("1 - 1");
+				Model.CurrentState.Run.AddSegment("1 - 2");
+				Model.CurrentState.Run.AddSegment("1 - 3");
+				Model.CurrentState.Run.AddSegment("1 - 4");
+				Model.CurrentState.Run.AddSegment("1 - 5");
+				Model.CurrentState.Run.AddSegment("1 - 6");
+				Model.CurrentState.Run.AddSegment("2 - 1");
+				Model.CurrentState.Run.AddSegment("2 - 2");
+				Model.CurrentState.Run.AddSegment("2 - 3");
+				Model.CurrentState.Run.AddSegment("2 - 4");
+				Model.CurrentState.Run.AddSegment("2 - 5");
+				Model.CurrentState.Run.AddSegment("2 - 6");
+				Model.CurrentState.Run.AddSegment("3 - 1");
+				Model.CurrentState.Run.AddSegment("3 - 2");
+				Model.CurrentState.Run.AddSegment("3 - 3");
+				Model.CurrentState.Run.AddSegment("3 - 4");
+				Model.CurrentState.Run.AddSegment("3 - 5");
+				Model.CurrentState.Run.AddSegment("End");
+			}
 
 			GetValues();
 		}
 		public void OnReset(object sender, TimerPhase e) {
 			currentSplit = -1;
+			hasReachedRoom = false;
+			Model.CurrentState.IsGameTimePaused = true;
 			WriteLog("---------Reset----------------------------------");
 		}
 		public void OnResume(object sender, EventArgs e) {
@@ -167,6 +187,7 @@ namespace LiveSplit.Semblance {
 		}
 		public void OnStart(object sender, EventArgs e) {
 			currentSplit = 0;
+			hasReachedRoom = false;
 			WriteLog("---------New Game " + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString(3) + "-------------------------");
 		}
 		public void OnUndoSplit(object sender, EventArgs e) {
