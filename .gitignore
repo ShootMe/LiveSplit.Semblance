@@ -1,0 +1,9 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs
+/bin
+/Components/LiveSplit.Semblance.exe
+/obj
+/LiveSplit.Semblance.csproj.user
