@@ -104,7 +104,7 @@ namespace LiveSplit.Semblance {
 			if (signatures != null) {
 				MemorySearcher searcher = new MemorySearcher();
 				searcher.MemoryFilter = delegate (MemInfo info) {
-					return (info.State & 0x1000) != 0 && (info.Protect & 0x40) != 0 && (info.Protect & 0x100) == 0;
+					return (info.State & 0x1000) != 0 && (info.Protect & 0x40) != 0 && (info.Protect & 0x100) == 0 && (long)info.RegionSize <= 0x100000;
 				};
 				for (int i = 0; i < signatures.Length; i++) {
 					ProgramSignature signature = signatures[i];

@@ -4,6 +4,7 @@ namespace LiveSplit.Semblance {
 	public partial class SplitterMemory {
 		private static ProgramPointer GameManager = new ProgramPointer(AutoDeref.Single, new ProgramSignature(PointerVersion.Steam, "558BEC5783EC548B7D0883EC0C57E8????????83C410BA", 23));
 		private static ProgramPointer LevelManager = new ProgramPointer(AutoDeref.Single, new ProgramSignature(PointerVersion.Steam, "558BEC5783EC048B7D08B8????????8938BA????????E8", 11));
+		private static ProgramPointer CharacterBehaviour = new ProgramPointer(AutoDeref.Single, new ProgramSignature(PointerVersion.Steam, "89388B473483EC086A00503900E8????????83C410", -4));
 		public Process Program { get; set; }
 		public bool IsHooked { get; set; } = false;
 		private DateTime LastHooked;
@@ -36,12 +37,23 @@ namespace LiveSplit.Semblance {
 			//GameManager.insatnce.SavedGameData.LastScene
 			return GameManager.Read(Program, 0xc, 0x0, 0x10, 0x14, 0x0);
 		}
+		public bool Dead() {
+			//CharacterBehaviour.insatnce._isDead
+			return CharacterBehaviour.Read<bool>(Program, 0x0, 0xdb);
+		}
+		public bool HasControl() {
+			//CharacterBehaviour.insatnce.HasControl
+			return CharacterBehaviour.Read<bool>(Program, 0x0, 0xa7);
+		}
 		public float InfectionLevel() {
 			string scene = ActiveScene();
+			if (string.IsNullOrEmpty(scene)) { return 1f; }
 
 			IntPtr collects = (IntPtr)LevelManager.Read<uint>(Program, 0x0, 0x28, 0xc);
+			if (collects == IntPtr.Zero) { return 1f; }
+
 			int size = Program.Read<int>(collects, 0xc);
-			if (size == 0) { return 1; }
+			if (size == 0) { return 1f; }
 
 			int total = 0;
 			for (int i = 0; i < size; i++) {

@@ -14,11 +14,13 @@ namespace LiveSplit.Semblance {
 		public IDictionary<string, Action> ContextMenuControls { get { return null; } }
 		private static string LOGFILE = "_Semblance.txt";
 		private SplitterMemory mem;
-		private int currentSplit = -1, lastLogCheck = 0;
+		private int currentSplit = -1, lastLogCheck = 0, lostControl = 0;
 		private bool hasLog = false, lastStarted = false, hasReachedRoom = false;
+		private SplitterSettings settings;
 		private Dictionary<LogObject, string> currentValues = new Dictionary<LogObject, string>();
 		public SplitterComponent(LiveSplitState state) {
 			mem = new SplitterMemory();
+			settings = new SplitterSettings();
 			foreach (LogObject key in Enum.GetValues(typeof(LogObject))) {
 				currentValues[key] = "";
 			}
@@ -45,34 +47,50 @@ namespace LiveSplit.Semblance {
 				lastStarted = hasStarted;
 			} else if (Model.CurrentState.CurrentPhase == TimerPhase.Running) {
 				string scene = mem.ActiveScene();
-				bool loading = scene == "EndingPrototype" ? mem.EndedGame() : mem.Loading();
-				if (scene == "0 - Enforce Collectible") {
-					hasReachedRoom = true;
+				bool loading = scene == "EndingPrototype" ? mem.HasControl() : mem.Loading();
+
+				if (currentSplit < Model.CurrentState.Run.Count && currentSplit < settings.Splits.Count) {
+					SplitName split = settings.Splits[currentSplit];
+					if (scene == "0 - Enforce Collectible") {
+						hasReachedRoom = true;
+					}
+
+					switch (split) {
+						case SplitName.Level_0_1: shouldSplit = scene == "SquishCreationTutorial" && hasReachedRoom && mem.InfectionLevel() == 0 && loading && !lastStarted; break;
+						case SplitName.Level_1_1: shouldSplit = scene == "1 - Intro Deform" && mem.InfectionLevel() == 0 && loading && !lastStarted; break;
+						case SplitName.Level_1_2: shouldSplit = scene == "2 - Deform Puzzles" && mem.InfectionLevel() == 0 && loading && !lastStarted; break;
+						case SplitName.Level_1_3: shouldSplit = scene == "3 - Laser Intro" && mem.InfectionLevel() == 0 && loading && !lastStarted; break;
+						case SplitName.Level_1_4: shouldSplit = scene == "4 - Wall Jumping" && mem.InfectionLevel() == 0 && loading && !lastStarted; break;
+						case SplitName.Level_1_5: shouldSplit = scene == "5 - Lasers 2" && mem.InfectionLevel() == 0 && loading && !lastStarted; break;
+						case SplitName.Level_1_6: shouldSplit = scene == "6 - No Dash Zones" && mem.InfectionLevel() == 0 && loading && !lastStarted; break;
+						case SplitName.Level_2_1: shouldSplit = scene == "1 - Intro Reset" && mem.InfectionLevel() == 0 && loading && !lastStarted; break;
+						case SplitName.Level_2_2: shouldSplit = scene == "2 - Reset Puzzles" && mem.InfectionLevel() == 0 && loading && !lastStarted; break;
+						case SplitName.Level_2_3: shouldSplit = scene == "3 - Throw up 1" && mem.InfectionLevel() == 0 && loading && !lastStarted; break;
+						case SplitName.Level_2_4: shouldSplit = scene == "4 - Throw up 2" && mem.InfectionLevel() == 0 && loading && !lastStarted; break;
+						case SplitName.Level_2_5: shouldSplit = scene == "5 - Throw Side" && mem.InfectionLevel() == 0 && loading && !lastStarted; break;
+						case SplitName.Level_2_6: shouldSplit = scene == "6 - Moving beams" && mem.InfectionLevel() == 0 && loading && !lastStarted; break;
+						case SplitName.Level_3_1: shouldSplit = scene == "1 - Intro hard" && mem.InfectionLevel() == 0 && loading && !lastStarted; break;
+						case SplitName.Level_3_2: shouldSplit = scene == "2 - Intro Puzzle" && mem.InfectionLevel() == 0 && loading && !lastStarted; break;
+						case SplitName.Level_3_3: shouldSplit = scene == "3 - intro beam" && mem.InfectionLevel() == 0 && loading && !lastStarted; break;
+						case SplitName.Level_3_4: shouldSplit = scene == "4 - Reset Beam Complex" && mem.InfectionLevel() == 0 && loading && !lastStarted; break;
+						case SplitName.Level_3_5: shouldSplit = scene == "5 - Reset Beam Throw Up Shape" && mem.InfectionLevel() == 0 && loading && !lastStarted; break;
+						case SplitName.Level_4_1:
+							if (scene != "EndingPrototype") { break; }
+
+							switch (lostControl) {
+								case 4: shouldSplit = loading && !lastStarted; break;
+								default:
+									if (loading && !lastStarted && mem.CurrentGameState() == GameState.Playing && !mem.Dead()) {
+										lostControl++;
+									}
+									break;
+							}
+							break;
+					}
 				}
-				switch (currentSplit) {
-					case 0: shouldSplit = scene == "SquishCreationTutorial" && hasReachedRoom && mem.InfectionLevel() == 0 && loading && !lastStarted; break;
-					case 1: shouldSplit = scene == "1 - Intro Deform" && mem.InfectionLevel() == 0 && loading && !lastStarted; break;
-					case 2: shouldSplit = scene == "2 - Deform Puzzles" && mem.InfectionLevel() == 0 && loading && !lastStarted; break;
-					case 3: shouldSplit = scene == "3 - Laser Intro" && mem.InfectionLevel() == 0 && loading && !lastStarted; break;
-					case 4: shouldSplit = scene == "4 - Wall Jumping" && mem.InfectionLevel() == 0 && loading && !lastStarted; break;
-					case 5: shouldSplit = scene == "5 - Lasers 2" && mem.InfectionLevel() == 0 && loading && !lastStarted; break;
-					case 6: shouldSplit = scene == "6 - No Dash Zones" && mem.InfectionLevel() == 0 && loading && !lastStarted; break;
-					case 7: shouldSplit = scene == "1 - Intro Reset" && mem.InfectionLevel() == 0 && loading && !lastStarted; break;
-					case 8: shouldSplit = scene == "2 - Reset Puzzles" && mem.InfectionLevel() == 0 && loading && !lastStarted; break;
-					case 9: shouldSplit = scene == "3 - Throw up 1" && mem.InfectionLevel() == 0 && loading && !lastStarted; break;
-					case 10: shouldSplit = scene == "4 - Throw up 2" && mem.InfectionLevel() == 0 && loading && !lastStarted; break;
-					case 11: shouldSplit = scene == "5 - Throw Side" && mem.InfectionLevel() == 0 && loading && !lastStarted; break;
-					case 12: shouldSplit = scene == "6 - Moving beams" && mem.InfectionLevel() == 0 && loading && !lastStarted; break;
-					case 13: shouldSplit = scene == "1 - Intro hard" && mem.InfectionLevel() == 0 && loading && !lastStarted; break;
-					case 14: shouldSplit = scene == "2 - Intro Puzzle" && mem.InfectionLevel() == 0 && loading && !lastStarted; break;
-					case 15: shouldSplit = scene == "3 - intro beam" && mem.InfectionLevel() == 0 && loading && !lastStarted; break;
-					case 16: shouldSplit = scene == "4 - Reset Beam Complex" && mem.InfectionLevel() == 0 && loading && !lastStarted; break;
-					case 17: shouldSplit = scene == "5 - Reset Beam Throw Up Shape" && mem.InfectionLevel() == 0 && loading && !lastStarted; break;
-					case 18: shouldSplit = scene == "EndingPrototype" && loading && !lastStarted; break;
-				}
-				lastStarted = loading;
 
 				Model.CurrentState.IsGameTimePaused = Model.CurrentState.CurrentPhase != TimerPhase.Running || loading;
+				lastStarted = loading;
 			}
 
 			HandleSplit(shouldSplit, false);
@@ -111,6 +129,8 @@ namespace LiveSplit.Semblance {
 						case LogObject.WorldType: curr = mem.ActiveWorld().ToString(); break;
 						case LogObject.ActiveScene: curr = mem.ActiveScene(); break;
 						case LogObject.Infection: curr = mem.InfectionLevel().ToString(); break;
+						case LogObject.Dead: curr = mem.Dead().ToString(); break;
+						case LogObject.HasControl: curr = mem.HasControl().ToString(); break;
 						default: curr = string.Empty; break;
 					}
 
@@ -149,32 +169,11 @@ namespace LiveSplit.Semblance {
 			LogValues();
 		}
 		public void Update(IInvalidator invalidator, LiveSplitState lvstate, float width, float height, LayoutMode mode) {
-			if (Model.CurrentState.Run.Count == 1 && string.IsNullOrEmpty(Model.CurrentState.Run[0].Name)) {
-				Model.CurrentState.Run[0].Name = "Intro";
-				Model.CurrentState.Run.AddSegment("1 - 1");
-				Model.CurrentState.Run.AddSegment("1 - 2");
-				Model.CurrentState.Run.AddSegment("1 - 3");
-				Model.CurrentState.Run.AddSegment("1 - 4");
-				Model.CurrentState.Run.AddSegment("1 - 5");
-				Model.CurrentState.Run.AddSegment("1 - 6");
-				Model.CurrentState.Run.AddSegment("2 - 1");
-				Model.CurrentState.Run.AddSegment("2 - 2");
-				Model.CurrentState.Run.AddSegment("2 - 3");
-				Model.CurrentState.Run.AddSegment("2 - 4");
-				Model.CurrentState.Run.AddSegment("2 - 5");
-				Model.CurrentState.Run.AddSegment("2 - 6");
-				Model.CurrentState.Run.AddSegment("3 - 1");
-				Model.CurrentState.Run.AddSegment("3 - 2");
-				Model.CurrentState.Run.AddSegment("3 - 3");
-				Model.CurrentState.Run.AddSegment("3 - 4");
-				Model.CurrentState.Run.AddSegment("3 - 5");
-				Model.CurrentState.Run.AddSegment("End");
-			}
-
 			GetValues();
 		}
 		public void OnReset(object sender, TimerPhase e) {
 			currentSplit = -1;
+			lostControl = 0;
 			hasReachedRoom = false;
 			Model.CurrentState.IsGameTimePaused = true;
 			WriteLog("---------Reset----------------------------------");
@@ -202,9 +201,9 @@ namespace LiveSplit.Semblance {
 			currentSplit++;
 			WriteLog("---------Split----------------------------------");
 		}
-		public Control GetSettingsControl(LayoutMode mode) { return null; }
-		public void SetSettings(XmlNode document) { }
-		public XmlNode GetSettings(XmlDocument document) { return document.CreateElement("Settings"); }
+		public Control GetSettingsControl(LayoutMode mode) { return settings; }
+		public void SetSettings(XmlNode document) { settings.SetSettings(document); }
+		public XmlNode GetSettings(XmlDocument document) { return settings.UpdateSettings(document); }
 		public void DrawHorizontal(Graphics g, LiveSplitState state, float height, Region clipRegion) { }
 		public void DrawVertical(Graphics g, LiveSplitState state, float width, Region clipRegion) { }
 		public float HorizontalWidth { get { return 0; } }
