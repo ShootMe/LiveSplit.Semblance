@@ -7,7 +7,7 @@ namespace LiveSplit.Semblance {
 		private static ProgramPointer CharacterBehaviour = new ProgramPointer(AutoDeref.Single, new ProgramSignature(PointerVersion.Steam, "89388B473483EC086A00503900E8????????83C410", -4));
 		public Process Program { get; set; }
 		public bool IsHooked { get; set; } = false;
-		private DateTime LastHooked;
+		public DateTime LastHooked;
 
 		public SplitterMemory() {
 			LastHooked = DateTime.MinValue;

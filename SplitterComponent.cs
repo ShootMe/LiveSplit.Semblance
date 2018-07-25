@@ -43,11 +43,11 @@ namespace LiveSplit.Semblance {
 
 			if (currentSplit == -1) {
 				bool hasStarted = mem.StartedGame();
-				shouldSplit = mem.CurrentGameState() == GameState.NewGame && hasStarted && !lastStarted;
+				shouldSplit = mem.LastHooked.AddSeconds(5) < DateTime.Now && mem.CurrentGameState() == GameState.NewGame && hasStarted && !lastStarted;
 				lastStarted = hasStarted;
 			} else if (Model.CurrentState.CurrentPhase == TimerPhase.Running) {
 				string scene = mem.ActiveScene();
-				bool loading = scene == "EndingPrototype" ? mem.HasControl() : mem.Loading();
+				bool loading = scene == "EndingPrototype" ? !mem.HasControl() : mem.Loading();
 
 				if (currentSplit < Model.CurrentState.Run.Count && currentSplit < settings.Splits.Count) {
 					SplitName split = settings.Splits[currentSplit];
@@ -75,12 +75,15 @@ namespace LiveSplit.Semblance {
 						case SplitName.Level_3_4: shouldSplit = scene == "4 - Reset Beam Complex" && mem.InfectionLevel() == 0 && loading && !lastStarted; break;
 						case SplitName.Level_3_5: shouldSplit = scene == "5 - Reset Beam Throw Up Shape" && mem.InfectionLevel() == 0 && loading && !lastStarted; break;
 						case SplitName.Level_4_1:
-							if (scene != "EndingPrototype") { break; }
+							if (scene != "EndingPrototype") {
+								lostControl = 0;
+								break;
+							}
 
 							switch (lostControl) {
 								case 4: shouldSplit = loading && !lastStarted; break;
 								default:
-									if (loading && !lastStarted && mem.CurrentGameState() == GameState.Playing && !mem.Dead()) {
+									if (loading && !lastStarted && mem.CurrentGameState() == GameState.Playing && !mem.Dead() && !mem.Loading()) {
 										lostControl++;
 									}
 									break;
@@ -173,8 +176,8 @@ namespace LiveSplit.Semblance {
 		}
 		public void OnReset(object sender, TimerPhase e) {
 			currentSplit = -1;
-			lostControl = 0;
 			hasReachedRoom = false;
+			lastStarted = true;
 			Model.CurrentState.IsGameTimePaused = true;
 			WriteLog("---------Reset----------------------------------");
 		}
@@ -187,6 +190,7 @@ namespace LiveSplit.Semblance {
 		public void OnStart(object sender, EventArgs e) {
 			currentSplit = 0;
 			hasReachedRoom = false;
+			lastStarted = true;
 			WriteLog("---------New Game " + System.Reflection.Assembly.GetExecutingAssembly().GetName().Version.ToString(3) + "-------------------------");
 		}
 		public void OnUndoSplit(object sender, EventArgs e) {
