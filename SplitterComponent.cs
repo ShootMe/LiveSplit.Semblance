@@ -14,7 +14,7 @@ namespace LiveSplit.Semblance {
 		public IDictionary<string, Action> ContextMenuControls { get { return null; } }
 		private static string LOGFILE = "_Semblance.txt";
 		private SplitterMemory mem;
-		private int currentSplit = -1, lastLogCheck = 0, lostControl = 0;
+		private int currentSplit = -1, lastLogCheck = 0;
 		private bool hasLog = false, lastStarted = false, hasReachedRoom = false;
 		private SplitterSettings settings;
 		private Dictionary<LogObject, string> currentValues = new Dictionary<LogObject, string>();
@@ -74,21 +74,7 @@ namespace LiveSplit.Semblance {
 						case SplitName.Level_3_3: shouldSplit = scene == "3 - intro beam" && mem.InfectionLevel() == 0 && loading && !lastStarted; break;
 						case SplitName.Level_3_4: shouldSplit = scene == "4 - Reset Beam Complex" && mem.InfectionLevel() == 0 && loading && !lastStarted; break;
 						case SplitName.Level_3_5: shouldSplit = scene == "5 - Reset Beam Throw Up Shape" && mem.InfectionLevel() == 0 && loading && !lastStarted; break;
-						case SplitName.Level_4_1:
-							if (scene != "EndingPrototype") {
-								lostControl = 0;
-								break;
-							}
-
-							switch (lostControl) {
-								case 4: shouldSplit = loading && !lastStarted; break;
-								default:
-									if (loading && !lastStarted && mem.CurrentGameState() == GameState.Playing && !mem.Dead() && !mem.Loading()) {
-										lostControl++;
-									}
-									break;
-							}
-							break;
+						case SplitName.Level_4_1: shouldSplit = scene == "EndingPrototype" && mem.XPos() > 42800 && loading && !lastStarted && mem.CurrentGameState() == GameState.Playing && !mem.Dead() && !mem.Loading(); break;
 					}
 				}
 
@@ -134,6 +120,7 @@ namespace LiveSplit.Semblance {
 						case LogObject.Infection: curr = mem.InfectionLevel().ToString(); break;
 						case LogObject.Dead: curr = mem.Dead().ToString(); break;
 						case LogObject.HasControl: curr = mem.HasControl().ToString(); break;
+						case LogObject.XPos: curr = mem.XPos().ToString("0"); break;
 						default: curr = string.Empty; break;
 					}
 

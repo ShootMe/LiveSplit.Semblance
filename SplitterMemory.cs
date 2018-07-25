@@ -14,36 +14,40 @@ namespace LiveSplit.Semblance {
 		}
 
 		public GameState CurrentGameState() {
-			//GameManager.insatnce._stateMachine.currentState
+			//GameManager.instance._stateMachine.currentState
 			return (GameState)GameManager.Read<int>(Program, 0xc, 0x0, 0x34, 0x10);
 		}
 		public WorldType ActiveWorld() {
-			//GameManager.insatnce.SavedGameData.LastActiveWorld
+			//GameManager.instance.SavedGameData.LastActiveWorld
 			return (WorldType)GameManager.Read<int>(Program, 0xc, 0x0, 0x10, 0x24);
 		}
 		public bool Loading() {
-			//GameManager.insatnce.LoadingScene
+			//GameManager.instance.LoadingScene
 			return GameManager.Read<bool>(Program, 0xc, 0x0, 0x74);
 		}
 		public bool StartedGame() {
-			//GameManager.insatnce._hasStartedGame
+			//GameManager.instance._hasStartedGame
 			return GameManager.Read<bool>(Program, 0xc, 0x0, 0x76);
 		}
 		public bool EndedGame() {
-			//GameManager.insatnce.SavedGameData.HasFinishedEnding
+			//GameManager.instance.SavedGameData.HasFinishedEnding
 			return GameManager.Read<bool>(Program, 0xc, 0x0, 0x10, 0x2c);
 		}
 		public string ActiveScene() {
-			//GameManager.insatnce.SavedGameData.LastScene
+			//GameManager.instance.SavedGameData.LastScene
 			return GameManager.Read(Program, 0xc, 0x0, 0x10, 0x14, 0x0);
 		}
 		public bool Dead() {
-			//CharacterBehaviour.insatnce._isDead
+			//CharacterBehaviour.instance._isDead
 			return CharacterBehaviour.Read<bool>(Program, 0x0, 0xdb);
 		}
 		public bool HasControl() {
-			//CharacterBehaviour.insatnce.HasControl
+			//CharacterBehaviour.instance.HasControl
 			return CharacterBehaviour.Read<bool>(Program, 0x0, 0xa7);
+		}
+		public float XPos() {
+			//CharacterBehaviour.instance._dashStartPos
+			return CharacterBehaviour.Read<float>(Program, 0x0, 0xcc);
 		}
 		public float InfectionLevel() {
 			string scene = ActiveScene();

@@ -11,7 +11,8 @@ namespace LiveSplit.Semblance {
 		ActiveScene,
 		Infection,
 		Dead,
-		HasControl
+		HasControl,
+		XPos
 	}
 	public enum SplitName {
 		[Description("Manual Split (Not Automatic)"), ToolTip("Does not split automatically. Use this for custom splits not yet defined.")]
