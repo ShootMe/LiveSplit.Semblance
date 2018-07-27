@@ -78,7 +78,7 @@ namespace LiveSplit.Semblance {
 					}
 				}
 
-				Model.CurrentState.IsGameTimePaused = Model.CurrentState.CurrentPhase != TimerPhase.Running || loading;
+				Model.CurrentState.IsGameTimePaused = Model.CurrentState.CurrentPhase != TimerPhase.Running || (scene == "EndingPrototype" ? mem.Loading() : loading);
 				lastStarted = loading;
 			}
 

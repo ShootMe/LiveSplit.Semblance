@@ -1,11 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <updates>
+	<update version="1.0.5">
+		<files>
+			<file path="Components/LiveSplit.Semblance.dll" status="changed"/>
+		</files>
+		<changelog>
+			<change> Fix loadless timer in final section </change>
+		</changelog>
+	</update>
 	<update version="1.0.4">
 		<files>
 			<file path="Components/LiveSplit.Semblance.dll" status="changed"/>
 		</files>
 		<changelog>
-			<change> Fix Ending </change>
+			<change> Fix ending split </change>
 		</changelog>
 	</update>
 	<update version="1.0.3">
@@ -13,7 +21,7 @@
 			<file path="Components/LiveSplit.Semblance.dll" status="changed"/>
 		</files>
 		<changelog>
-			<change> Fix Ending </change>
+			<change> Fix ending split </change>
 		</changelog>
 	</update>
 	<update version="1.0.2">
