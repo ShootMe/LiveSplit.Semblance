@@ -16,6 +16,7 @@ namespace LiveSplit.Semblance {
 		private SplitterMemory mem;
 		private int currentSplit = -1, lastLogCheck = 0;
 		private bool hasLog = false, lastStarted = false, hasReachedRoom = false;
+		private string lastScene;
 		private SplitterSettings settings;
 		private Dictionary<LogObject, string> currentValues = new Dictionary<LogObject, string>();
 		public SplitterComponent(LiveSplitState state) {
@@ -57,29 +58,34 @@ namespace LiveSplit.Semblance {
 
 					switch (split) {
 						case SplitName.Level_0_1: shouldSplit = scene == "SquishCreationTutorial" && hasReachedRoom && mem.InfectionLevel() == 0 && loading && !lastStarted; break;
+						case SplitName.World_1: shouldSplit = scene == "World1 - Cuddly" && lastScene == "Overworld Major"; break;
 						case SplitName.Level_1_1: shouldSplit = scene == "1 - Intro Deform" && mem.InfectionLevel() == 0 && loading && !lastStarted; break;
 						case SplitName.Level_1_2: shouldSplit = scene == "2 - Deform Puzzles" && mem.InfectionLevel() == 0 && loading && !lastStarted; break;
 						case SplitName.Level_1_3: shouldSplit = scene == "3 - Laser Intro" && mem.InfectionLevel() == 0 && loading && !lastStarted; break;
 						case SplitName.Level_1_4: shouldSplit = scene == "4 - Wall Jumping" && mem.InfectionLevel() == 0 && loading && !lastStarted; break;
 						case SplitName.Level_1_5: shouldSplit = scene == "5 - Lasers 2" && mem.InfectionLevel() == 0 && loading && !lastStarted; break;
 						case SplitName.Level_1_6: shouldSplit = scene == "6 - No Dash Zones" && mem.InfectionLevel() == 0 && loading && !lastStarted; break;
+						case SplitName.World_2: shouldSplit = scene == "World2 - Swamp" && lastScene == "Overworld Major"; break;
 						case SplitName.Level_2_1: shouldSplit = scene == "1 - Intro Reset" && mem.InfectionLevel() == 0 && loading && !lastStarted; break;
 						case SplitName.Level_2_2: shouldSplit = scene == "2 - Reset Puzzles" && mem.InfectionLevel() == 0 && loading && !lastStarted; break;
 						case SplitName.Level_2_3: shouldSplit = scene == "3 - Throw up 1" && mem.InfectionLevel() == 0 && loading && !lastStarted; break;
 						case SplitName.Level_2_4: shouldSplit = scene == "4 - Throw up 2" && mem.InfectionLevel() == 0 && loading && !lastStarted; break;
 						case SplitName.Level_2_5: shouldSplit = scene == "5 - Throw Side" && mem.InfectionLevel() == 0 && loading && !lastStarted; break;
 						case SplitName.Level_2_6: shouldSplit = scene == "6 - Moving beams" && mem.InfectionLevel() == 0 && loading && !lastStarted; break;
+						case SplitName.World_3: shouldSplit = scene == "World3 - Snow" && lastScene == "Overworld Major"; break;
 						case SplitName.Level_3_1: shouldSplit = scene == "1 - Intro hard" && mem.InfectionLevel() == 0 && loading && !lastStarted; break;
 						case SplitName.Level_3_2: shouldSplit = scene == "2 - Intro Puzzle" && mem.InfectionLevel() == 0 && loading && !lastStarted; break;
 						case SplitName.Level_3_3: shouldSplit = scene == "3 - intro beam" && mem.InfectionLevel() == 0 && loading && !lastStarted; break;
 						case SplitName.Level_3_4: shouldSplit = scene == "4 - Reset Beam Complex" && mem.InfectionLevel() == 0 && loading && !lastStarted; break;
 						case SplitName.Level_3_5: shouldSplit = scene == "5 - Reset Beam Throw Up Shape" && mem.InfectionLevel() == 0 && loading && !lastStarted; break;
+						case SplitName.World_4: shouldSplit = scene == "EndingPrototype" && lastScene == "Overworld Major"; break;
 						case SplitName.Level_4_1: shouldSplit = scene == "EndingPrototype" && mem.XPos() > 42800 && loading && !lastStarted && mem.CurrentGameState() == GameState.Playing && !mem.Dead() && !mem.Loading(); break;
 					}
 				}
 
 				Model.CurrentState.IsGameTimePaused = Model.CurrentState.CurrentPhase != TimerPhase.Running || (scene == "EndingPrototype" ? mem.Loading() : loading);
 				lastStarted = loading;
+				lastScene = scene;
 			}
 
 			HandleSplit(shouldSplit, false);
@@ -121,6 +127,7 @@ namespace LiveSplit.Semblance {
 						case LogObject.Dead: curr = mem.Dead().ToString(); break;
 						case LogObject.HasControl: curr = mem.HasControl().ToString(); break;
 						case LogObject.XPos: curr = mem.XPos().ToString("0"); break;
+						case LogObject.Checkpoint: curr = mem.Checkpoint().ToString(); break;
 						default: curr = string.Empty; break;
 					}
 

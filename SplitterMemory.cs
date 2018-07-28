@@ -49,6 +49,20 @@ namespace LiveSplit.Semblance {
 			//CharacterBehaviour.instance._dashStartPos
 			return CharacterBehaviour.Read<float>(Program, 0x0, 0xcc);
 		}
+		public int Checkpoint() {
+			string scene = ActiveScene();
+			if (string.IsNullOrEmpty(scene)) { return -1; }
+
+			IntPtr checkpoints = (IntPtr)LevelManager.Read<uint>(Program, 0x0, 0x30);
+			int size = Program.Read<int>(checkpoints, 0xc);
+			for (int i = 0; i < size; i++) {
+				bool isActive = Program.Read<bool>(checkpoints, 0x10 + (i * 4), 0x1c);
+				if (isActive) {
+					return i;
+				}
+			}
+			return -1;
+		}
 		public float InfectionLevel() {
 			string scene = ActiveScene();
 			if (string.IsNullOrEmpty(scene)) { return 1f; }

@@ -12,7 +12,8 @@ namespace LiveSplit.Semblance {
 		Infection,
 		Dead,
 		HasControl,
-		XPos
+		XPos,
+		Checkpoint
 	}
 	public enum SplitName {
 		[Description("Manual Split (Not Automatic)"), ToolTip("Does not split automatically. Use this for custom splits not yet defined.")]
@@ -21,6 +22,8 @@ namespace LiveSplit.Semblance {
 		[Description("Intro (Completed)"), ToolTip("Splits when completing the intro")]
 		Level_0_1,
 
+		[Description("World 1 (Entered)"), ToolTip("Splits when entering world 1")]
+		World_1,
 		[Description("1 - 1 (Completed)"), ToolTip("Splits when completing level 1 - 1")]
 		Level_1_1,
 		[Description("1 - 2 (Completed)"), ToolTip("Splits when completing level 1 - 2")]
@@ -34,6 +37,8 @@ namespace LiveSplit.Semblance {
 		[Description("1 - 6 (Completed)"), ToolTip("Splits when completing level 1 - 6")]
 		Level_1_6,
 
+		[Description("World 2 (Entered)"), ToolTip("Splits when entering world 2")]
+		World_2,
 		[Description("2 - 1 (Completed)"), ToolTip("Splits when completing level 2 - 1")]
 		Level_2_1,
 		[Description("2 - 2 (Completed)"), ToolTip("Splits when completing level 2 - 2")]
@@ -47,6 +52,8 @@ namespace LiveSplit.Semblance {
 		[Description("2 - 6 (Completed)"), ToolTip("Splits when completing level 2 - 6")]
 		Level_2_6,
 
+		[Description("World 3 (Entered)"), ToolTip("Splits when entering world 3")]
+		World_3,
 		[Description("3 - 1 (Completed)"), ToolTip("Splits when completing level 3 - 1")]
 		Level_3_1,
 		[Description("3 - 2 (Completed)"), ToolTip("Splits when completing level 3 - 2")]
@@ -58,6 +65,8 @@ namespace LiveSplit.Semblance {
 		[Description("3 - 5 (Completed)"), ToolTip("Splits when completing level 3 - 5")]
 		Level_3_5,
 
+		[Description("World 4 (Entered)"), ToolTip("Splits when entering world 4")]
+		World_4,
 		[Description("4 - 1 (Completed)"), ToolTip("Splits when completing level 4 - 1")]
 		Level_4_1,
 	}
