@@ -29,6 +29,7 @@
 			this.lblDefaultSplits = new System.Windows.Forms.Label();
 			this.btnWorldSplits = new System.Windows.Forms.Button();
 			this.btnLevels = new System.Windows.Forms.Button();
+			this.btnShrines = new System.Windows.Forms.Button();
 			this.flowMain.SuspendLayout();
 			this.flowOptions.SuspendLayout();
 			this.SuspendLayout();
@@ -55,7 +56,7 @@
 			this.flowMain.Location = new System.Drawing.Point(0, 0);
 			this.flowMain.Margin = new System.Windows.Forms.Padding(0);
 			this.flowMain.Name = "flowMain";
-			this.flowMain.Size = new System.Drawing.Size(227, 29);
+			this.flowMain.Size = new System.Drawing.Size(285, 29);
 			this.flowMain.TabIndex = 0;
 			this.flowMain.WrapContents = false;
 			this.flowMain.DragDrop += new System.Windows.Forms.DragEventHandler(this.flowMain_DragDrop);
@@ -69,10 +70,11 @@
 			this.flowOptions.Controls.Add(this.lblDefaultSplits);
 			this.flowOptions.Controls.Add(this.btnWorldSplits);
 			this.flowOptions.Controls.Add(this.btnLevels);
+			this.flowOptions.Controls.Add(this.btnShrines);
 			this.flowOptions.Location = new System.Drawing.Point(0, 0);
 			this.flowOptions.Margin = new System.Windows.Forms.Padding(0);
 			this.flowOptions.Name = "flowOptions";
-			this.flowOptions.Size = new System.Drawing.Size(227, 29);
+			this.flowOptions.Size = new System.Drawing.Size(285, 29);
 			this.flowOptions.TabIndex = 0;
 			// 
 			// lblDefaultSplits
@@ -106,6 +108,17 @@
 			this.btnLevels.UseVisualStyleBackColor = true;
 			this.btnLevels.Click += new System.EventHandler(this.btnLevels_Click);
 			// 
+			// btnShrines
+			// 
+			this.btnShrines.AutoSize = true;
+			this.btnShrines.Location = new System.Drawing.Point(230, 3);
+			this.btnShrines.Name = "btnShrines";
+			this.btnShrines.Size = new System.Drawing.Size(52, 23);
+			this.btnShrines.TabIndex = 4;
+			this.btnShrines.Text = "Shrines";
+			this.btnShrines.UseVisualStyleBackColor = true;
+			this.btnShrines.Click += new System.EventHandler(this.btnShrines_Click);
+			// 
 			// SplitterSettings
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -116,7 +129,7 @@
 			this.Controls.Add(this.flowMain);
 			this.Margin = new System.Windows.Forms.Padding(0);
 			this.Name = "SplitterSettings";
-			this.Size = new System.Drawing.Size(227, 29);
+			this.Size = new System.Drawing.Size(285, 29);
 			this.Load += new System.EventHandler(this.Settings_Load);
 			this.flowMain.ResumeLayout(false);
 			this.flowMain.PerformLayout();
@@ -134,5 +147,6 @@
 		private System.Windows.Forms.Button btnWorldSplits;
 		private System.Windows.Forms.Label lblDefaultSplits;
 		private System.Windows.Forms.Button btnLevels;
+		private System.Windows.Forms.Button btnShrines;
 	}
 }

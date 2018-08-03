@@ -13,7 +13,8 @@ namespace LiveSplit.Semblance {
 		Dead,
 		HasControl,
 		XPos,
-		Checkpoint
+		Checkpoint,
+		Shrines
 	}
 	public enum SplitName {
 		[Description("Manual Split (Not Automatic)"), ToolTip("Does not split automatically. Use this for custom splits not yet defined.")]
@@ -28,12 +29,18 @@ namespace LiveSplit.Semblance {
 		Level_1_1,
 		[Description("1 - 2 (Completed)"), ToolTip("Splits when completing level 1 - 2")]
 		Level_1_2,
+		[Description("1 - 2 (Shrine)"), ToolTip("Splits when finding the shrine in level 1 - 2")]
+		Level_1_2_Shrine,
 		[Description("1 - 3 (Completed)"), ToolTip("Splits when completing level 1 - 3")]
 		Level_1_3,
 		[Description("1 - 4 (Completed)"), ToolTip("Splits when completing level 1 - 4")]
 		Level_1_4,
+		[Description("1 - 4 (Shrine)"), ToolTip("Splits when finding the shrine in level 1 - 4")]
+		Level_1_4_Shrine,
 		[Description("1 - 5 (Completed)"), ToolTip("Splits when completing level 1 - 5")]
 		Level_1_5,
+		[Description("1 - 5 (Shrine)"), ToolTip("Splits when finding the shrine in level 1 - 5")]
+		Level_1_5_Shrine,
 		[Description("1 - 6 (Completed)"), ToolTip("Splits when completing level 1 - 6")]
 		Level_1_6,
 
@@ -45,12 +52,18 @@ namespace LiveSplit.Semblance {
 		Level_2_2,
 		[Description("2 - 3 (Completed)"), ToolTip("Splits when completing level 2 - 3")]
 		Level_2_3,
+		[Description("2 - 3 (Shrine)"), ToolTip("Splits when finding the shrine in level 2 - 3")]
+		Level_2_3_Shrine,
 		[Description("2 - 4 (Completed)"), ToolTip("Splits when completing level 2 - 4")]
 		Level_2_4,
+		[Description("2 - 4 (Shrine)"), ToolTip("Splits when finding the shrine in level 2 - 4")]
+		Level_2_4_Shrine,
 		[Description("2 - 5 (Completed)"), ToolTip("Splits when completing level 2 - 5")]
 		Level_2_5,
 		[Description("2 - 6 (Completed)"), ToolTip("Splits when completing level 2 - 6")]
 		Level_2_6,
+		[Description("2 - 6 (Shrine)"), ToolTip("Splits when finding the shrine in level 2 - 6")]
+		Level_2_6_Shrine,
 
 		[Description("World 3 (Entered)"), ToolTip("Splits when entering world 3")]
 		World_3,
@@ -58,12 +71,16 @@ namespace LiveSplit.Semblance {
 		Level_3_1,
 		[Description("3 - 2 (Completed)"), ToolTip("Splits when completing level 3 - 2")]
 		Level_3_2,
+		[Description("3 - 2 (Shrine)"), ToolTip("Splits when finding the shrine in level 3 - 2")]
+		Level_3_2_Shrine,
 		[Description("3 - 3 (Completed)"), ToolTip("Splits when completing level 3 - 3")]
 		Level_3_3,
 		[Description("3 - 4 (Completed)"), ToolTip("Splits when completing level 3 - 4")]
 		Level_3_4,
 		[Description("3 - 5 (Completed)"), ToolTip("Splits when completing level 3 - 5")]
 		Level_3_5,
+		[Description("3 - 5 (Shrine)"), ToolTip("Splits when finding the shrine in level 3 - 5")]
+		Level_3_5_Shrine,
 
 		[Description("World 4 (Entered)"), ToolTip("Splits when entering world 4")]
 		World_4,

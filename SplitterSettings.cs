@@ -156,6 +156,29 @@ namespace LiveSplit.Semblance {
 
 			LoadSettings();
 		}
+		private void btnShrines_Click(object sender, EventArgs e) {
+			if (Splits.Count > 0 && MessageBox.Show(this, "You already have some splits setup. This will clear anything you have and default in these splits.\r\n\r\nAre you sure you want to continue?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) != DialogResult.Yes) {
+				return;
+			}
+
+			Splits.Clear();
+			Splits.Add(SplitName.Level_0_1);
+
+			Splits.Add(SplitName.Level_1_2_Shrine);
+			Splits.Add(SplitName.Level_1_4_Shrine);
+			Splits.Add(SplitName.Level_1_5_Shrine);
+
+			Splits.Add(SplitName.Level_2_3_Shrine);
+			Splits.Add(SplitName.Level_2_4_Shrine);
+			Splits.Add(SplitName.Level_2_6_Shrine);
+
+			Splits.Add(SplitName.Level_3_2_Shrine);
+			Splits.Add(SplitName.Level_3_5_Shrine);
+
+			Splits.Add(SplitName.Level_4_1);
+
+			LoadSettings();
+		}
 		private List<string> GetAvailableDescriptions<T>() where T : struct {
 			List<string> values = new List<string>();
 			foreach (T value in Enum.GetValues(typeof(T))) {
