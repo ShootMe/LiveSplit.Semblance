@@ -63,27 +63,22 @@ namespace LiveSplit.Semblance {
 			}
 			return -1;
 		}
-		public int ShrineCount(int id = -1) {
+		public bool HasShrine() {
 			string scene = ActiveScene();
-			if (string.IsNullOrEmpty(scene)) { return 0; }
+			if (string.IsNullOrEmpty(scene)) { return false; }
 
 			IntPtr shrines = (IntPtr)LevelManager.Read<uint>(Program, 0x0, 0x1c);
-			if (shrines == IntPtr.Zero) { return 0; }
+			if (shrines == IntPtr.Zero) { return false; }
 
 			int size = Program.Read<int>(shrines, 0xc);
-			if (size == 0) { return 0; }
+			if (size == 0) { return false; }
 
-			int total = 0;
 			for (int i = 0; i < size; i++) {
-				int sid = -1;
-				if (id >= 0) {
-					sid = Program.Read<int>(shrines, 0x10 + (i * 4), 0x18, 0x8);
-				}
-				if (sid == id && Program.Read<bool>(shrines, 0x10 + (i * 4), 0x18, 0xc)) {
-					total++;
+				if (Program.Read<bool>(shrines, 0x10 + (i * 4), 0x18, 0xc)) {
+					return true;
 				}
 			}
-			return total;
+			return false;
 		}
 		public float InfectionLevel() {
 			string scene = ActiveScene();

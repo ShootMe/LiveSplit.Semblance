@@ -15,7 +15,7 @@ namespace LiveSplit.Semblance {
 		private static string LOGFILE = "_Semblance.txt";
 		private SplitterMemory mem;
 		private int currentSplit = -1, lastLogCheck = 0;
-		private bool hasLog = false, lastStarted = false, hasReachedRoom = false;
+		private bool hasLog = false, lastStarted = false, hasReachedRoom = false, lastShrine = false;
 		private string lastScene;
 		private SplitterSettings settings;
 		private Dictionary<LogObject, string> currentValues = new Dictionary<LogObject, string>();
@@ -49,6 +49,7 @@ namespace LiveSplit.Semblance {
 			} else if (Model.CurrentState.CurrentPhase == TimerPhase.Running) {
 				string scene = mem.ActiveScene();
 				bool loading = scene == "EndingPrototype" ? !mem.HasControl() : mem.Loading();
+				bool shrine = mem.HasShrine();
 
 				if (currentSplit < Model.CurrentState.Run.Count && currentSplit < settings.Splits.Count) {
 					SplitName split = settings.Splits[currentSplit];
@@ -61,31 +62,31 @@ namespace LiveSplit.Semblance {
 						case SplitName.World_1: shouldSplit = scene == "World1 - Cuddly" && lastScene == "Overworld Major"; break;
 						case SplitName.Level_1_1: shouldSplit = scene == "1 - Intro Deform" && mem.InfectionLevel() == 0 && loading && !lastStarted; break;
 						case SplitName.Level_1_2: shouldSplit = scene == "2 - Deform Puzzles" && mem.InfectionLevel() == 0 && loading && !lastStarted; break;
-						case SplitName.Level_1_2_Shrine: shouldSplit = scene == "2 - Deform Puzzles" && mem.ShrineCount(0) == 1; break;
+						case SplitName.Level_1_2_Shrine: shouldSplit = scene == "2 - Deform Puzzles" && shrine && !lastShrine; break;
 						case SplitName.Level_1_3: shouldSplit = scene == "3 - Laser Intro" && mem.InfectionLevel() == 0 && loading && !lastStarted; break;
 						case SplitName.Level_1_4: shouldSplit = scene == "4 - Wall Jumping" && mem.InfectionLevel() == 0 && loading && !lastStarted; break;
-						case SplitName.Level_1_4_Shrine: shouldSplit = scene == "4 - Wall Jumping" && mem.ShrineCount(1) == 1; break;
+						case SplitName.Level_1_4_Shrine: shouldSplit = scene == "4 - Wall Jumping" && shrine && !lastShrine; break;
 						case SplitName.Level_1_5: shouldSplit = scene == "5 - Lasers 2" && mem.InfectionLevel() == 0 && loading && !lastStarted; break;
-						case SplitName.Level_1_5_Shrine: shouldSplit = scene == "5 - Lasers 2" && mem.ShrineCount(2) == 1; break;
+						case SplitName.Level_1_5_Shrine: shouldSplit = scene == "5 - Lasers 2" && shrine && !lastShrine; break;
 						case SplitName.Level_1_6: shouldSplit = scene == "6 - No Dash Zones" && mem.InfectionLevel() == 0 && loading && !lastStarted; break;
 						case SplitName.World_2: shouldSplit = scene == "World2 - Swamp" && lastScene == "Overworld Major"; break;
 						case SplitName.Level_2_1: shouldSplit = scene == "1 - Intro Reset" && mem.InfectionLevel() == 0 && loading && !lastStarted; break;
 						case SplitName.Level_2_2: shouldSplit = scene == "2 - Reset Puzzles" && mem.InfectionLevel() == 0 && loading && !lastStarted; break;
 						case SplitName.Level_2_3: shouldSplit = scene == "3 - Throw up 1" && mem.InfectionLevel() == 0 && loading && !lastStarted; break;
-						case SplitName.Level_2_3_Shrine: shouldSplit = scene == "3 - Throw up 1" && mem.ShrineCount(3) == 1; break;
+						case SplitName.Level_2_3_Shrine: shouldSplit = scene == "3 - Throw up 1" && shrine && !lastShrine; break;
 						case SplitName.Level_2_4: shouldSplit = scene == "4 - Throw up 2" && mem.InfectionLevel() == 0 && loading && !lastStarted; break;
-						case SplitName.Level_2_4_Shrine: shouldSplit = scene == "4 - Throw up 2" && mem.ShrineCount(4) == 1; break;
+						case SplitName.Level_2_4_Shrine: shouldSplit = scene == "4 - Throw up 2" && shrine && !lastShrine; break;
 						case SplitName.Level_2_5: shouldSplit = scene == "5 - Throw Side" && mem.InfectionLevel() == 0 && loading && !lastStarted; break;
 						case SplitName.Level_2_6: shouldSplit = scene == "6 - Moving beams" && mem.InfectionLevel() == 0 && loading && !lastStarted; break;
-						case SplitName.Level_2_6_Shrine: shouldSplit = scene == "6 - Moving beams" && mem.ShrineCount(5) == 1; break;
+						case SplitName.Level_2_6_Shrine: shouldSplit = scene == "6 - Moving beams" && shrine && !lastShrine; break;
 						case SplitName.World_3: shouldSplit = scene == "World3 - Snow" && lastScene == "Overworld Major"; break;
 						case SplitName.Level_3_1: shouldSplit = scene == "1 - Intro hard" && mem.InfectionLevel() == 0 && loading && !lastStarted; break;
 						case SplitName.Level_3_2: shouldSplit = scene == "2 - Intro Puzzle" && mem.InfectionLevel() == 0 && loading && !lastStarted; break;
-						case SplitName.Level_3_2_Shrine: shouldSplit = scene == "2 - Intro Puzzle" && mem.ShrineCount(6) == 1; break;
+						case SplitName.Level_3_2_Shrine: shouldSplit = scene == "2 - Intro Puzzle" && shrine && !lastShrine; break;
 						case SplitName.Level_3_3: shouldSplit = scene == "3 - intro beam" && mem.InfectionLevel() == 0 && loading && !lastStarted; break;
 						case SplitName.Level_3_4: shouldSplit = scene == "4 - Reset Beam Complex" && mem.InfectionLevel() == 0 && loading && !lastStarted; break;
 						case SplitName.Level_3_5: shouldSplit = scene == "5 - Reset Beam Throw Up Shape" && mem.InfectionLevel() == 0 && loading && !lastStarted; break;
-						case SplitName.Level_3_5_Shrine: shouldSplit = scene == "5 - Reset Beam Throw Up Shape" && mem.ShrineCount(7) == 1; break;
+						case SplitName.Level_3_5_Shrine: shouldSplit = scene == "5 - Reset Beam Throw Up Shape" && shrine && !lastShrine; break;
 						case SplitName.World_4: shouldSplit = scene == "EndingPrototype" && lastScene == "Overworld Major"; break;
 						case SplitName.Level_4_1: shouldSplit = scene == "EndingPrototype" && mem.XPos() > 42800 && loading && !lastStarted && mem.CurrentGameState() == GameState.Playing && !mem.Dead() && !mem.Loading(); break;
 					}
@@ -94,6 +95,7 @@ namespace LiveSplit.Semblance {
 				Model.CurrentState.IsGameTimePaused = Model.CurrentState.CurrentPhase != TimerPhase.Running || (scene == "EndingPrototype" ? mem.Loading() : loading);
 				lastStarted = loading;
 				lastScene = scene;
+				lastShrine = shrine;
 			}
 
 			HandleSplit(shouldSplit, false);
@@ -136,7 +138,7 @@ namespace LiveSplit.Semblance {
 						case LogObject.HasControl: curr = mem.HasControl().ToString(); break;
 						case LogObject.XPos: curr = mem.XPos().ToString("0"); break;
 						case LogObject.Checkpoint: curr = mem.Checkpoint().ToString(); break;
-						case LogObject.Shrines: curr = mem.ShrineCount().ToString(); break;
+						case LogObject.Shrines: curr = mem.HasShrine().ToString(); break;
 						default: curr = string.Empty; break;
 					}
 
