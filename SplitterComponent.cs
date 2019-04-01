@@ -223,6 +223,17 @@ namespace LiveSplit.Semblance {
 		public float PaddingRight { get { return 0; } }
 		public float PaddingTop { get { return 0; } }
 		public float VerticalHeight { get { return 0; } }
-		public void Dispose() { }
+		public void Dispose() {
+			if (Model != null) {
+				Model.CurrentState.OnReset -= OnReset;
+				Model.CurrentState.OnPause -= OnPause;
+				Model.CurrentState.OnResume -= OnResume;
+				Model.CurrentState.OnStart -= OnStart;
+				Model.CurrentState.OnSplit -= OnSplit;
+				Model.CurrentState.OnUndoSplit -= OnUndoSplit;
+				Model.CurrentState.OnSkipSplit -= OnSkipSplit;
+				Model = null;
+			}
+		}
 	}
 }
